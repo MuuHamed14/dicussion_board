@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{board.name}}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active"><a href="{% url 'home'%}"> Boards </a></li>
+    <li class="breadcrumb-item active"> {{board.name}} </li>
+{% endblock %}
+
+{% block content %}
+<table class ="table">
+    <thead class="thead-dark">
+        <tr>
+            <th> Topic </th>
+            <th> Post  </th>
+            <th> Views </th>
+            <th> Created_by </th>
+            <th> created_dt </th>
+            <th> Updated_by </th>
+            <th> Updated_dt </th>
+        </tr>
+    </thead>
+   <tbody>
+        {% for topic in topics %}
+        <tr>
+            <td> <a href="{% url 'topic_posts' board.id topic.id %}"> {{topic.subject }} </a></td>
+            <td> {{topic.comments}} </td>
+            <td> {{topic.views}} </td>
+            <td> {{topic.created_by.username}} </td>
+            <td> {{topic.created_dt}} </td>
+            <td> {{topic.updated_by}} </td>
+            <td> {{topic.updated_dt}} </td>
+        </tr>
+        {% endfor %}
+   </tbody>
+</table>
+<a href="{% url 'new_topic' board.id %}" class="btn btn-primary"> New Topic </a>
+<br><br>
+<nav aria-label ="topics-pagination">
+    <ul class="pagination">
+
+        <!-- Previous -->
+        {% if topics.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{topics.previous.page_number}}"> Previous  </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link"> Previous </a>
+            </li>
+        {% endif %}
+        <!--- End of Previous-->
+
+        <!-- start of loop -->
+        {% for page_num in topics.paginator.page_range %}
+            {% if topics_num == page_num %}
+                <li class="page-item active">
+                    {{page_num}}
+                    <span class="sr-only"> (current) </span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_num}}"> {{page_num}} </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+       <!-- End of loop -->
+
+         <!-- Next -->
+        {% if topics.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{topics.next.page_number}}"> Next  </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link"> Next </a>
+            </li>
+        {% endif %}
+        <!--- End of Next -->
+
+    </ul>
+</nav>
+{% endblock %}
